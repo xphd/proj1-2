@@ -271,7 +271,22 @@ class EmbLayer(Layer):
         """
 
         ######################################### 
-        # Write your code here
+        # Write your code here        
+        if init_emb is not None:
+            self.init_emb = init_emb
+            if output_vecs is None:
+                print("Error! output_vecs must be proviede when init_emb is provided!")
+            else:
+                self.output_vecs = output_vecs
+                print("Success!")
+        else: # init_emb is None
+            if num_nodes is None or emb_dim is None:
+                print("Error! Both num_nodes and emb_dim must be provided when init_emb is not.")
+            else :
+                self.init_emb = (np.random.random(size=(num_nodes, emb_dim)) - 0.5) * 2
+                self.output_vecs = (np.random.random(size=(num_nodes, emb_dim)) - 0.5) * 2
+                print("Success!")
+#         print(self.init_emb)
         ######################################### 
 
         super(EmbLayer, self).__init__(**kwargs) # Be sure to call this at the end 
@@ -286,6 +301,8 @@ class EmbLayer(Layer):
 
         ######################################### 
         # Write your code here
+        model = Keras.models.Sequential()
+        model.add(Dense())
         ######################################### 
 
         super(EmbLayer, self).build(input_shape)  # Be sure to call this at the end
@@ -303,6 +320,12 @@ class EmbLayer(Layer):
 
         ######################################### 
         # Write your code here
+        print("EmbLayer.call is called")
+        logits = sigmoid(np.sum(self.init_emb[pairs[0]] * self.output_vecs[pairs[1]], axis=1))             
+#         logits = 1
+
+        input_shape = slef.init_emb.shape
+        self.build(input_shape)
         ######################################### 
 
         return logits 
